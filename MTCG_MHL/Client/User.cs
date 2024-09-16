@@ -9,34 +9,54 @@ public class User
     {
         Username = username;
         Password = password;
+        Elo = 100;
+        Gold = 20;
     }
     
-    public string Username
+    public string Username { get; private set; }
+    
+    public string Password { get; private set; }
+    
+    public int Elo { get; private set; }
+    
+    public int Gold { get; private set; }
+
+    public List<Card> Deck { get; set; } = new List<Card>();
+    
+    public List<Card> CardStack { get; set; } = new List<Card>();
+
+    public void AddCardToStash(Card card)
     {
-        get;
-        private set;
+        CardStack.Add(card);
+    }
+
+    public void RemoveCardFromStash(Card card)
+    {
+        CardStack.Remove(card);
     }
     
-    public string Password
-    {
-        get;
-        private set;
-    }
-
-    public List<Card> Deck
-    {
-        get;
-        set;
-    }
-
     public void AddCardToDeck(Card card)
     {
-        Deck.Add(card);
+        if (CardStack.Count < 4)
+        {
+            for (int i = 0; i < CardStack.Count; i++)
+            {
+                if (CardStack[i] == card)
+                    Deck.Add(card);
+                else
+                {
+                    Console.WriteLine("Card is not in Stash\n");
+                }
+            }
+        }
+        else
+            Console.WriteLine("Deck is full. Please remove a card first.\n");
     }
 
     public void RemoveCardFromDeck(Card card)
     {
         Deck.Remove(card);
+        Console.WriteLine("{0} has been removed.\n", card);
     }
 
     public void ListDeck()

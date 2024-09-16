@@ -1,21 +1,16 @@
-using System.Globalization;
 using MTCG_MHL.Interface;
-using MTCG_MHL.Game;
 
 namespace MTCG_MHL.Game.Cards.Monster;
 
-public class Goblin : Card, IMonster
+public class Knight : Card, IMonster
 {
-    public Goblin(string elementType)
+    public Knight(string elementType)
     {
         ElementType = elementType;
-        CardName = "Goblin";
+        CardName = "Knight";
         MonsterHealth = 15;
         CardDamage = 5;
     }
-    
-    public int MonsterHealth { get; set; }
-    
 
     protected override int CardSpecialEffect(Card card, int damage)
     {
@@ -26,7 +21,7 @@ public class Goblin : Card, IMonster
             case "Ork":
                 return damage;
             case "Dragon":
-                return 0;
+                return damage;
             case "Kraken":
                 return damage;
             case "Goblin":
@@ -40,6 +35,7 @@ public class Goblin : Card, IMonster
         }
     }
 
+    public int MonsterHealth { get; set; }
     public void ReceiveDamage(int damage)
     {
         MonsterHealth -= damage;

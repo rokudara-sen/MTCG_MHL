@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Game\Cards\Spells\" />
+      <Folder Include="Database\" />
       <Folder Include="Server\" />
     </ItemGroup>
 
