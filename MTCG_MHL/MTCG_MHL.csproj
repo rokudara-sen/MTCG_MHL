@@ -8,8 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Database\" />
+      <Folder Include="Business\Services\" />
+      <Folder Include="DataAccess\Database\" />
+      <Folder Include="DataAccess\Repositories\" />
+      <Folder Include="Interface\" />
       <Folder Include="Server\" />
+      <Folder Include="Tests\" />
     </ItemGroup>
 
 </Project>

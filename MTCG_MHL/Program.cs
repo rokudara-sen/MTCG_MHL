@@ -1,7 +1,11 @@
-﻿using MTCG_MHL.Game.Cards.Monster;
-using System;
-using MTCG_MHL.Game;
-using MTCG_MHL.Game.Cards.Spells;
+﻿using System;
+using MTCG_MHL.Business.Logic.Battle;
+using MTCG_MHL.Models.Player;
+using MTCG_MHL.Business.Logic.Inventory;
+using MTCG_MHL.Business.Logic.Pack;
+using MTCG_MHL.Models.Cards.Monsters;
+using MTCG_MHL.Models.Battle;
+using MTCG_MHL.Models.Cards;
 
 namespace MTCG_MHL;
 
@@ -9,28 +13,47 @@ class Program
 {
     static void Main(string[] args)
     {
-        Goblin goblin = new Goblin("Fire");
-        Dragon dragon = new Dragon("Water");
+        var packLogic1 = new PackLogic();
+        var user1 = new User("Peter", "Peter");
+        var packLogic2 = new PackLogic();
+        var user2 = new User("Franz", "Franz");
+        var inventoryLogic1 = new InventoryLogic(user1);
+        var inventoryLogic2 = new InventoryLogic(user2);
 
-        Ignitio ignitio = new Ignitio();
-        Fountain fountain = new Fountain();
-        FlyingPunch flyingPunch = new FlyingPunch();
+        var packagePeter = packLogic1.Package(50);
+        var packageFranz = packLogic2.Package(50);
         
-        Console.WriteLine("Before attack:");
-        Console.WriteLine("Goblin Health: {0}", goblin.MonsterHealth);
-        Console.WriteLine("Dragon Health: {0}", dragon.MonsterHealth);
-        Console.WriteLine();
+        var rnd = new Random();
 
-        // Goblin attacks Dragon
-        goblin.AttackTarget(dragon);
-        ignitio.AttackTarget(dragon);
-        flyingPunch.AttackTarget(dragon);
-        fountain.AttackTarget(dragon);
-        dragon.AttackTarget(goblin);
+        // For Peter
+        foreach (var card in packagePeter)
+        {
+            inventoryLogic1.AddCardToStash(card);  // Add cards to the stash first
+        }
 
-        // Display health after attack
-        Console.WriteLine("After attack:");
-        Console.WriteLine("Goblin Health: {0}", goblin.MonsterHealth);
-        Console.WriteLine("Dragon Health: {0}", dragon.MonsterHealth);
+        // Now add cards to the deck
+        foreach (var card in packagePeter.OrderBy(x => rnd.Next()).Take(4))
+        {
+            inventoryLogic1.AddCardToDeck(card);
+        }
+
+        // For Franz
+        foreach (var card in packageFranz)
+        {
+            inventoryLogic2.AddCardToStash(card);
+        }
+
+        // Now add cards to the deck
+        foreach (var card in packageFranz.OrderBy(x => rnd.Next()).Take(4))
+        {
+            inventoryLogic2.AddCardToDeck(card);
+        }
+
+        
+        var battleLogic = new BattleLogic(user1, user2);
+        var battleResult = battleLogic.StartBattle(user1, user2);
+
+        Console.WriteLine("Winner: {0}, Loser: {1}", battleResult.Winner.Username, battleResult.Loser.Username);
+
     }
 }
