@@ -1,5 +1,6 @@
 using System.Data;
 using MTCG_MHL.Business.Logic.Inventory;
+using MTCG_MHL.Enums;
 using MTCG_MHL.Models.Battle;
 using MTCG_MHL.Models.Player;
 using MTCG_MHL.Models.Cards;
@@ -30,7 +31,6 @@ public class BattleLogic
         for(int i = 0; i < 100; i++)
         {
             Console.WriteLine($"Round #{roundNumber}");
-            roundNumber++;
             var cardUser1 = ChooseRandomCardFromDeck(user1);
             var cardUser2 = ChooseRandomCardFromDeck(user2);
             
@@ -50,6 +50,7 @@ public class BattleLogic
                 Console.WriteLine("{0}, you won. Congratulations", user2.Username);
                 return new BattleResult(user2, user1);
             }
+            roundNumber++;
         }
         return new BattleResult(true);
     }
@@ -105,6 +106,27 @@ public class BattleLogic
     {
         int baseDamage = attacker.BaseDamage;
         double effectivenessMultiplies = _effectivenessLogic.CalculateEffectiveness(attacker, defender);
+        
+        SpecialRuleOutcome outcome = _specialRulesLogic.CheckSpecialRules(attacker, defender);
+        switch (outcome)
+        {
+            case SpecialRuleOutcome.NoDamage:
+                return 0;
+            case SpecialRuleOutcome.InstantDeath:
+                return int.MaxValue;
+            case SpecialRuleOutcome.Immunity:
+                return 0;
+            case SpecialRuleOutcome.DoubleDamage:
+                baseDamage *= 2;
+                break;
+            case SpecialRuleOutcome.HalfDamage:
+                baseDamage /= 2;
+                break;
+            case SpecialRuleOutcome.NoEffect:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException("Something went wrong with calculating damage for special rules.");
+        }
         int finalDamage = (int)(baseDamage * effectivenessMultiplies);
         return finalDamage;
     }

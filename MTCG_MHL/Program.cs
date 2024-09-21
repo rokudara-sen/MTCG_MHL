@@ -31,8 +31,8 @@ class Program
             inventoryLogic1.AddCardToStash(card);  // Add cards to the stash first
         }
 
-        // Now add cards to the deck
-        foreach (var card in packagePeter.OrderBy(x => rnd.Next()).Take(4))
+        // Now add the 4 cards with the highest rarity to the deck
+        foreach (var card in packagePeter.OrderByDescending(x => x.CardRarity).Take(4))
         {
             inventoryLogic1.AddCardToDeck(card);
         }
@@ -43,8 +43,8 @@ class Program
             inventoryLogic2.AddCardToStash(card);
         }
 
-        // Now add cards to the deck
-        foreach (var card in packageFranz.OrderBy(x => rnd.Next()).Take(4))
+        // Now add the 4 cards with the highest rarity to the deck
+        foreach (var card in packageFranz.OrderByDescending(x => x.CardRarity).Take(4))
         {
             inventoryLogic2.AddCardToDeck(card);
         }
@@ -52,8 +52,15 @@ class Program
         
         var battleLogic = new BattleLogic(user1, user2);
         var battleResult = battleLogic.StartBattle(user1, user2);
-
-        Console.WriteLine("Winner: {0}, Loser: {1}", battleResult.Winner.Username, battleResult.Loser.Username);
+        
+        if (battleResult.IsDraw)
+        {
+            Console.WriteLine("The battle ended in a draw.");
+        }
+        else
+        {
+            Console.WriteLine("Winner: {0}, Loser: {1}", battleResult.Winner.Username, battleResult.Loser.Username);
+        }
 
     }
 }
