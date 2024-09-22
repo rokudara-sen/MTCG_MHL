@@ -7,11 +7,11 @@ namespace MTCG_MHL.Business.Logic.Pack;
 
 public class CardFactory
 {
-    public static Card CreateCard(ElementType elementType, CardName cardName, VisibleName visibleName, CardType cardType, int baseDamage, int cardRarity = 0)
+    public static Card CreateCard(ElementType elementType, CardName cardName, VisibleName visibleName, int baseDamage, int cardRarity = 0)
     {
         if(cardRarity == 0)
         {
-            cardRarity = RarityLogic.GetRandomRarity();
+            cardRarity = RarityLogic.GetRandomRarity(10);
         }
         switch (cardName)
         {

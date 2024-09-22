@@ -1,62 +1,61 @@
 using MTCG_MHL.Business.Enums;
+using MTCG_MHL.Business.Logic.Inventory;
 using MTCG_MHL.Enums;
 using MTCG_MHL.Models.Cards;
+using MTCG_MHL.Models.Package;
+using MTCG_MHL.Models.Player;
 
 namespace MTCG_MHL.Business.Logic.Pack;
 
 public class PackLogic
 {
-    public List<Card> Package(int amountOfCards)
+    public Package CreatePackage(int amountOfCards, int costOfCoins)
     {
         Random rnd = new Random();
+        CardDamageLogic cardDamageLogic = new CardDamageLogic();
         List<Card> cards = new List<Card>();
         
         ElementType[] elementTypeValues = (ElementType[])Enum.GetValues(typeof(ElementType));
-        CardType[] cardTypeValues = (CardType[])Enum.GetValues(typeof(CardType));
         CardName[] cardNameValues = (CardName[])Enum.GetValues(typeof(CardName));
         VisibleName[] visibleNameValues = (VisibleName[])Enum.GetValues(typeof(VisibleName));
 
-        Card card;
+        
         for (int i = 0; i < amountOfCards; i++)
         {
             ElementType randomElementType = elementTypeValues[rnd.Next(elementTypeValues.Length)];
-            CardType randomCardType = cardTypeValues[rnd.Next(cardTypeValues.Length)];
             CardName randomCardName = cardNameValues[rnd.Next(cardNameValues.Length)];
             VisibleName randomVisibleName = visibleNameValues[rnd.Next(visibleNameValues.Length)];
             
-            int cardRarity = RarityLogic.GetRandomRarity();
-            int baseDamage = 0;
-            
-            if (cardRarity >= 45)
-            {
-                baseDamage = rnd.Next(20, 25);
-            }
-            else if (cardRarity >= 30)
-            { 
-                baseDamage = rnd.Next(15, 19);
-            }
-            else if (cardRarity >= 20)
-            { 
-                baseDamage = rnd.Next(10, 14);
-            }
-            else if (cardRarity >= 10)
-            {
-                baseDamage = rnd.Next(5, 9);
-            }
-            else
-            {
-                baseDamage = rnd.Next(1, 4);
-            }
-            card = CardFactory.CreateCard(randomElementType, randomCardName, randomVisibleName, randomCardType, baseDamage, cardRarity);
+            int cardRarity = RarityLogic.GetRandomRarity(costOfCoins);
+            int baseDamage = cardDamageLogic.CalculateBaseDamage(cardRarity);
+            Card card = CardFactory.CreateCard(randomElementType, randomCardName, randomVisibleName, baseDamage, cardRarity);
             cards.Add(card);
         }
-        return cards;
+        return new Package(cards, costOfCoins);
     }
     
-    public void PrintPackage(List<Card> cards)
+    public void BuyPackage(User user, Package package)
+    {
+        InventoryLogic inventoryLogic = new InventoryLogic(user);
+        if (user.Gold < package.Cost)
+        {
+            throw new ArgumentException("Not enough gold to buy this package.");
+        }
+        if ((user.Gold - package.Cost) < 0)
+        {
+            throw new ArgumentException("You cannot go into negative gold.");
+        }
+        user.Gold -= package.Cost;
+        foreach (var card in package.Cards)
+        {
+            inventoryLogic.AddCardToStash(card);
+        }
+    }
+    
+    public void PrintPackage(Package package)
     {
         Console.WriteLine("Generated Cards in Package:");
-        foreach (var card in cards)
+        foreach (var card in package.Cards)
         {
             Console.WriteLine($"Card Name: {EnumHelper.GetDescription(card.CardName)}");
             Console.WriteLine($"Element Type: {EnumHelper.GetDescription(card.ElementType)}");

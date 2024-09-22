@@ -21,9 +21,9 @@ public class User
     
     public string Password { get; private set; }
     
-    public int Elo { get; private set; }
+    public int Elo { get; set; }
     
-    public int Gold { get; private set; }
+    public int Gold { get; set; }
     
     public Deck PlayerDeck { get; set; }
     

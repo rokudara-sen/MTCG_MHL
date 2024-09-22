@@ -1,4 +1,5 @@
 using System.Data;
+using MTCG_MHL.Business.Logic.Elo;
 using MTCG_MHL.Business.Logic.Inventory;
 using MTCG_MHL.Enums;
 using MTCG_MHL.Models.Battle;
@@ -16,6 +17,8 @@ public class BattleLogic
     private readonly EffectivenessLogic _effectivenessLogic;
     private readonly SpecialRulesLogic _specialRulesLogic;
     
+    private readonly EloLogic _eloLogic;
+    
     public BattleLogic(User user1, User user2)
     {
         _inventoyLogicUser1 = new InventoryLogic(user1);
@@ -23,6 +26,8 @@ public class BattleLogic
         
         _effectivenessLogic = new EffectivenessLogic();
         _specialRulesLogic = new SpecialRulesLogic();
+        
+        _eloLogic = new EloLogic();
     }
 
     public BattleResult StartBattle(User user1, User user2)
@@ -41,12 +46,14 @@ public class BattleLogic
             
             if (winner == user1)
             {
+                _eloLogic.AdjustEloPointsAfterBattle(winner, user2);
                 Console.WriteLine("{0}, you won. Congratulations", user1.Username);
                 return new BattleResult(user1, user2);
             }
 
             if (winner == user2)
             {
+                _eloLogic.AdjustEloPointsAfterBattle(winner, user1);
                 Console.WriteLine("{0}, you won. Congratulations", user2.Username);
                 return new BattleResult(user2, user1);
             }
