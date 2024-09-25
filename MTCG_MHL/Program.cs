@@ -3,6 +3,7 @@ using MTCG_MHL.Business.Logic.Battle;
 using MTCG_MHL.Models.Player;
 using MTCG_MHL.Business.Logic.Inventory;
 using MTCG_MHL.Business.Logic.Pack;
+using MTCG_MHL.Server;
 
 
 namespace MTCG_MHL;
@@ -11,7 +12,10 @@ class Program
 {
     static void Main(string[] args)
     {
-        var packLogic = new PackLogic();
+        var server = new TcpServer("127.0.0.1", 10001);
+        server.Start();
+        
+        /* var packLogic = new PackLogic();
         var user1 = new User("Peter", "Peter");
         var user2 = new User("Franz", "Franz");
         var inventoryLogic1 = new InventoryLogic(user1);
@@ -46,7 +50,7 @@ class Program
         else
         {
             Console.WriteLine("Winner: {0}, Loser: {1}", battleResult.Winner.Username, battleResult.Loser.Username);
-        }
+        } */
 
     }
 }
