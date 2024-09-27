@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using MTCG_MHL.Business.Logic.Battle;
 using MTCG_MHL.Models.Player;
 using MTCG_MHL.Business.Logic.Inventory;
@@ -12,8 +13,8 @@ class Program
 {
     static void Main(string[] args)
     {
-        var server = new TcpServer("127.0.0.1", 10001);
-        server.Start();
+        var tcpServer = new TcpServer(IPAddress.Loopback, 10001);
+        tcpServer.Start();
         
         /* var packLogic = new PackLogic();
         var user1 = new User("Peter", "Peter");

@@ -1,28 +1,34 @@
+using System;
 using System.Net;
 using System.Net.Sockets;
 using MTCG_MHL.Business.Logic.Http;
 
-namespace MTCG_MHL.Server;
-
-public class TcpServer
+namespace MTCG_MHL.Server
 {
-    private readonly TcpListener _listener;
-    private readonly HttpProcessor _httpProcessor;
-    public TcpServer(string ip, int port)
+    public class TcpServer
     {
-        _listener = new TcpListener(IPAddress.Parse(ip), port);
-        _httpProcessor = new HttpProcessor();
-    }
+        private readonly TcpListener _httpServer;
+        private readonly HttpProcessor _httpProcessor;
 
-    public void Start()
-    {
-        Console.WriteLine("Starting the server...");
-        _listener.Start();
-
-        while (true)
+        public TcpServer(IPAddress ipAddress, int port)
         {
-            var clientSocket = _listener.AcceptTcpClient();
-            _httpProcessor.ProcessRequest(clientSocket);
+            _httpServer = new TcpListener(ipAddress, port);
+            _httpProcessor = new HttpProcessor();
+        }
+
+        public void Start()
+        {
+            Console.WriteLine("Our first simple HTTP-Server: http://localhost:10001/");
+
+            // ===== I. Start the HTTP-Server =====
+            _httpServer.Start();
+
+            while (true)
+            {
+                // ----- 0. Accept the TCP-Client -----
+                var clientSocket = _httpServer.AcceptTcpClient();
+                _httpProcessor.ProcessRequest(clientSocket);
+            }
         }
     }
 }
