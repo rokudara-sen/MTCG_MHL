@@ -5,6 +5,10 @@ namespace MTCG_MHL.Models.Player;
 
 public class User
 {
+    public User()
+    {
+        
+    }
     public User(string username, string password)
     {
         Username = username;
@@ -17,9 +21,9 @@ public class User
         Losses = 0;
     }
     
-    public string Username { get; private set; }
+    public string Username { get; set; }
     
-    public string Password { get; private set; }
+    public string Password { get; set; }
     
     public int Elo { get; set; }
     
@@ -32,4 +36,6 @@ public class User
     public int Wins { get; set; }
     
     public int Losses { get; set; }
+    
+    public string AuthToken { get; set; }
 }

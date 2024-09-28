@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using MTCG_MHL.Models.Player;
 
 namespace MTCG_MHL.DataAccess.Repositories
@@ -5,7 +6,7 @@ namespace MTCG_MHL.DataAccess.Repositories
     public class UserRepository
     {
         // In-memory user storage for simplicity
-        private readonly Dictionary<string, string> _users = new();  // Username -> Password
+        private readonly ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>();  // Username -> User
 
         // Method to check if a user exists
         public bool UserExists(string username)
@@ -20,20 +21,23 @@ namespace MTCG_MHL.DataAccess.Repositories
             {
                 return false; // User already exists
             }
-            _users.Add(user.Username, user.Password);
-            return true;
+            return _users.TryAdd(user.Username, user); // Add the user object
         }
 
         // Method to validate login credentials
         public bool ValidateUser(string username, string password)
         {
-            return _users.TryGetValue(username, out var storedPassword) && storedPassword == password;
+            if (_users.TryGetValue(username, out var user))
+            {
+                return user.Password == password;
+            }
+            return false;
         }
 
-        // Method to retrieve all users (if needed)
-        public Dictionary<string, string> GetAllUsers()
+        // Method to get a user by their auth token
+        public User GetUserByToken(string token)
         {
-            return _users;
+            return _users.Values.FirstOrDefault(u => u.AuthToken == token);
         }
     }
 }

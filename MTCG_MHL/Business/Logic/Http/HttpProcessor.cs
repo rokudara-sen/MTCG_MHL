@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.Sockets;
 using MTCG_MHL.Business.Endpoints;
+using MTCG_MHL.DataAccess.Repositories;
 using MTCG_MHL.Models.HTTP;
 
 namespace MTCG_MHL.Business.Logic.Http
@@ -10,11 +11,13 @@ namespace MTCG_MHL.Business.Logic.Http
     {
         private readonly HttpRequest _requestHandler;
         private readonly HttpResponse _responseHandler;
+        private readonly UserRepository _userRepository;
 
         public HttpProcessor()
         {
             _requestHandler = new HttpRequest();
             _responseHandler = new HttpResponse();
+            _userRepository = new UserRepository();
         }
 
         public void ProcessRequest(TcpClient clientSocket)
@@ -28,7 +31,7 @@ namespace MTCG_MHL.Business.Logic.Http
             var response = new Response();
             if (request.Path == "/users" || request.Path == "/sessions")
             {
-                var userEndpoint = new UserEndpoint();
+                var userEndpoint = new UserEndpoint(_userRepository);
                 userEndpoint.HandleRequest(request, response);
             }
             else if (request.Path == "/packages")
