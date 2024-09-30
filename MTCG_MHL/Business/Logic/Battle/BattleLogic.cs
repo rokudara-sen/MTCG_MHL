@@ -75,8 +75,6 @@ public class BattleLogic
     {
         if (result.IsDraw)
             return;
-
-        // Compare by card properties (like CardName) instead of reference equality
         if (result.Winner.CardName == cardUser1.CardName)
         {
             _inventoyLogicUser1.AddCardToDeck(cardUser1, true);

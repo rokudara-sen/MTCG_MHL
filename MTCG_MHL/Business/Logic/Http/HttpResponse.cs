@@ -9,8 +9,7 @@ namespace MTCG_MHL.Business.Logic.Http
         public void SendResponse(StreamWriter writer, Response response)
         {
             var writerAlsoToConsole = new StreamTracer(writer);  // Helper class to write to both client and console
-
-            // First line: HTTP-Version Status-Code Reason-Phrase
+            
             writerAlsoToConsole.WriteLine($"{response.HttpVersion} {response.StatusCode} {response.ReasonPhrase}");
 
             // Ensure Content-Length header is set
