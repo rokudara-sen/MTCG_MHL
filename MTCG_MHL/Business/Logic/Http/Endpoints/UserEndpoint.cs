@@ -58,7 +58,7 @@ namespace MTCG_MHL.Business.Endpoints
 
         private void LoginUser(Request request, Response response, User user)
         {
-            if (!_userRepository.ValidateUser(user.Username, user.Password) || _userRepository.UserExists(user.Username))
+            if (!_userRepository.ValidateUser(user.Username, user.Password))
             {
                 response.StatusCode = 401;
                 response.ReasonPhrase = "Unauthorized";

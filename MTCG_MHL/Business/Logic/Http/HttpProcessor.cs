@@ -11,13 +11,12 @@ namespace MTCG_MHL.Business.Logic.Http
     {
         private readonly HttpRequest _requestHandler;
         private readonly HttpResponse _responseHandler;
-        private readonly UserRepository _userRepository;
+        private readonly UserRepository _userRepository = new UserRepository();
 
         public HttpProcessor()
         {
             _requestHandler = new HttpRequest();
             _responseHandler = new HttpResponse();
-            _userRepository = new UserRepository();
         }
 
         public void ProcessRequest(TcpClient clientSocket)
